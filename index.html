@@ -1,47 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Curso Vue 3</title>
     <!-- LINK CSS -->
-    <link rel="stylesheet" href="./assets/styles.css">
+    <link rel="stylesheet" href="./assets/styles.css" />
 
     <!-- VUE CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-</head>
-<body>
-    <div id="app"> 
-        <div class="product-display">
-            <div class="product-container">
-                <div class="product image">
-                    <img :src="image" alt="img_product">
-                </div>
-                <div class="product-info">
-                    <h1>{{product_title}}</h1>
-                    <p v-if="inStock > 10"> In Stock </p>
-                    <p v-else-if="inStock < 10 && inStock > 0"> Almost of out</p>
-                    <p v-else>Out Stock</p>
-                    <!-- INFO PRODUTO -->
-                </div>
+  </head>
+  <body>
+    <div id="app">
+      <div class="cart">cart: {{ cart }}</div>
+      <div class="product-display">
+        <div class="product-container">
+          <div class="product-image">
+            <img :src="image" alt="img_product" />
+          </div>
+          <div class="product-info">
+            <h1>{{product_title}}</h1>
+            <p v-if="inStock > 10">In Stock</p>
+            <p v-else-if="inStock < 10 && inStock > 0">Almost out</p>
+            <p v-else>Out Stock</p>
+            <ul>
+              <li v-for="detail in details" :key="detail">{{detail}}</li>
+            </ul>
+            <div 
+            v-for="variant in variants" 
+            :key="variant.id"
+            @mouseover="changeImage(variant.image)">
+              {{variant.color}}
             </div>
+            <!-- v-on:click = @click -->
+            <button class="button" v-on:click="AddToCart">Add to Cart</button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script>
-        const { createApp, ref } = Vue
+      const { createApp, ref } = Vue
 
-        createApp({
-            setup() {
-                const message = ref('Hello Vue')
-                return {
-                    product_title: ref('T-Shirt'),
-                    image: ref("./assets/images/t-shirt-blue.png"),
-                    inStock: ref(150)
-                }
+    createApp({
+          
+        setup() {
+
+        const cart = ref(0);
+        const AddToCart = () => {
+            cart.value += 1
+        }
+
+        const image = ref("./assets/images/t-shirt-blue.png");
+        const changeImage = (variantImage) => {
+            image.value = variantImage
+        }
+
+        return {
+            product_title: ref('T-Shirt'),
+            image,
+            inStock: ref(0),
+            details: ['50% Cotton', '30% polyester', '20% wool'],
+            variants: [
+                {id:1, color: 'blue', image: "./assets/images/t-shirt-blue.png"},
+                {id:2, color:'green', image: "./assets/images/t-shirt-green.png"}
+            ],
+            cart,
+            AddToCart,
+            changeImage
             }
-        }).mount('#app')
+        }
+    }).mount('#app')
     </script>
-</body>
+  </body>
 </html>
